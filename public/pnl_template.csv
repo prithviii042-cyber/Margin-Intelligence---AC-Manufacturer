@@ -1,0 +1,20 @@
+Label,Value (₹ Cr),Notes
+Gross Revenue,,Total invoiced before any deductions
+Trade Scheme,,Dealer scheme and volume discount payouts
+Cash Discount,,Early payment discounts
+Volume Rebate,,Retrospective volume-linked rebates
+Scheme Payouts,,Seasonal and promotional scheme costs
+Net Revenue,,Gross Revenue minus all deductions
+BOM,,Bill of materials - compressor Cu Al PCB motor etc
+Conversion Cost,,Labour power factory overhead
+Inbound Freight,,Freight on inbound raw materials and components
+Import Duty,,Customs duty on imported components
+Total COGS,,Sum of all cost of goods sold lines
+Outbound Freight,,Primary and secondary freight to market
+Warranty,,Warranty claims and service cost provision
+Installation,,Installation subsidy and support cost
+Advertising,,A&P and brand investment
+Trade Marketing,,In-store and channel marketing spend
+Selling Overhead,,Field force dealer incentives channel costs
+Corporate Overhead,,G&A finance HR IT corporate costs
+R&D,,Research and development investment
