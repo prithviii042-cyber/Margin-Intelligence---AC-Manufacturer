@@ -368,7 +368,7 @@ function Kpi({ label, value, sub, delta, small }) {
   );
 }
 
-function WBar({ label, value, max, pos, sub }) {
+function WBar({ l: label, v: value, max, pos, s: sub }) {
   const w = Math.min(100, Math.abs(value) / max * 100);
   return (
     <div style={{ marginBottom: 8 }}>
