@@ -325,11 +325,11 @@ function parsePnLFile(file) {
 
 // ── CSS TOKENS ────────────────────────────────────────────────
 const T = {
-  bg:  "#0f0e0b", bg2: "#131110",
-  s3:  "rgba(255,255,255,0.025)",
-  brd: "rgba(255,255,255,0.07)",
-  tx:  "#e8e3d5", sub: "#8a8579", dim: "#5c5850",
-  gld: "#d4a574", grn: "#9dc4a8", red: "#b8848c",
+  bg:  "#1a1a24", bg2: "#23232f",
+  s3:  "rgba(255,255,255,0.03)",
+  brd: "rgba(255,230,0,0.12)",
+  tx:  "#f6f6fa", sub: "#9998a8", dim: "#6b6878",
+  gld: "#ffe600", grn: "#2db757", red: "#e4526b",
 };
 
 const styles = `
@@ -338,7 +338,7 @@ const styles = `
   body { background: ${T.bg}; color: ${T.tx}; font-family: 'Inter Tight', -apple-system, sans-serif; }
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: ${T.bg}; }
-  ::-webkit-scrollbar-thumb { background: #2a2720; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: #2e2e3a; border-radius: 3px; }
   input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
   input[type=range]::-webkit-slider-runnable-track { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; }
   input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: ${T.gld}; border-radius: 50%; margin-top: -6px; cursor: pointer; transition: transform .15s; }
@@ -372,7 +372,7 @@ function WBar({ l: label, v: value, max, pos, s: sub }) {
   const w = Math.min(100, Math.abs(value) / max * 100);
   return (
     <div style={{ marginBottom: 8 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2, color: "#c8c1af" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2, color: "#c8c4d8" }}>
         <span>{label}{sub && <span style={{ color: T.dim, marginLeft: 5, fontSize: 9 }}>{sub}</span>}</span>
         <span style={{ fontFamily: "'JetBrains Mono', monospace", color: T.tx }}>{value >= 0 ? "+" : ""}{fmtCr(value)}</span>
       </div>
@@ -393,7 +393,7 @@ function AgentVoice({ agId, content, setting, unit, bps }) {
         <span style={{ fontSize: 12, color: a.color, fontWeight: 500 }}>{a.name}</span>
         <span style={{ fontSize: 8, color: T.dim, textTransform: "uppercase", letterSpacing: ".1em" }}>{a.role}</span>
       </div>
-      <div style={{ fontSize: 10, padding: "2px 8px", background: "rgba(212,165,116,0.1)", border: "1px solid rgba(212,165,116,0.22)", color: T.gld, display: "inline-block", marginBottom: 6 }}>
+      <div style={{ fontSize: 10, padding: "2px 8px", background: "rgba(255,230,0,0.1)", border: "1px solid rgba(255,230,0,0.3)", color: T.gld, display: "inline-block", marginBottom: 6 }}>
         @ {setting} {unit} · +{bps} bps
       </div>
       <div style={{ fontSize: 12, color: T.tx, lineHeight: 1.72, whiteSpace: "pre-wrap" }}>{content}</div>
@@ -433,7 +433,7 @@ function UploadPanel({ onUpload, uploadStatus }) {
           {uploadStatus}
         </div>
       )}
-      <div style={{ marginTop: 16, padding: "10px 14px", background: "rgba(212,165,116,0.05)", border: "1px solid rgba(212,165,116,0.18)", textAlign: "left" }}>
+      <div style={{ marginTop: 16, padding: "10px 14px", background: "rgba(255,230,0,0.05)", border: "1px solid rgba(255,230,0,0.18)", textAlign: "left" }}>
         <div style={{ fontSize: 9, letterSpacing: ".16em", textTransform: "uppercase", color: T.gld, marginBottom: 7 }}>Expected row labels in column A (value in column B, ₹ Cr)</div>
         <div style={{ fontSize: 10, color: T.sub, lineHeight: 1.9, fontFamily: "'JetBrains Mono', monospace" }}>
           Gross Revenue · Net Revenue · Trade Scheme · Cash Discount<br />
@@ -572,7 +572,7 @@ export default function App() {
 
   const navBtn = (v) => ({
     padding: "6px 11px", border: `1px solid ${view === v ? "rgba(212,165,116,0.35)" : T.brd}`,
-    background: view === v ? "rgba(212,165,116,0.1)" : "transparent",
+    background: view === v ? "rgba(255,230,0,0.1)" : "transparent",
     color: view === v ? T.gld : "#c8c1af", cursor: "pointer",
     fontSize: 10, fontFamily: "inherit", display: "flex", alignItems: "center", gap: 5,
   });
@@ -583,13 +583,18 @@ export default function App() {
   const [mEff, mEffNote]   = activeLever ? activeLever.effL(modalV)  : ["—", ""];
 
   return (
-    <div style={{ minHeight: "100vh", background: T.bg, color: T.tx, fontFamily: "'Inter Tight', -apple-system, sans-serif", backgroundImage: "radial-gradient(ellipse at 50% 0%, rgba(212,165,116,0.06), transparent 55%)" }}>
+    <div style={{ minHeight: "100vh", background: T.bg, color: T.tx, fontFamily: "'Inter Tight', -apple-system, sans-serif", backgroundImage: "radial-gradient(ellipse at 50% 0%, rgba(255,230,0,0.06), transparent 55%)" }}>
       <style>{styles}</style>
 
       {/* ── HEADER ── */}
-      <header style={{ borderBottom: `1px solid ${T.brd}`, padding: "11px 22px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "rgba(15,14,11,0.94)", backdropFilter: "blur(12px)", zIndex: 20, flexWrap: "wrap", gap: 8 }}>
+      <header style={{ borderBottom: `1px solid ${T.brd}`, padding: "11px 22px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "rgba(26,26,36,0.96)", backdropFilter: "blur(12px)", zIndex: 20, flexWrap: "wrap", gap: 8 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
-          <div style={{ width: 22, height: 22, background: "linear-gradient(135deg,#d4a574,#b8848c)", flexShrink: 0 }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 0, flexShrink: 0 }}>
+            <div style={{ background: "#ffe600", padding: "3px 6px 3px 5px", lineHeight: 1 }}>
+              <span style={{ fontFamily: "'Inter Tight', sans-serif", fontWeight: 700, fontSize: 17, color: "#1a1a24", letterSpacing: "-0.5px" }}>EY</span>
+            </div>
+            <div style={{ width: 1, height: 22, background: "rgba(255,230,0,0.3)", margin: "0 10px" }} />
+          </div>
           <div>
             <div style={{ fontSize: 14, fontFamily: "'Fraunces', Georgia, serif" }}>MarginIQ</div>
             <div style={{ fontSize: 8, color: T.sub, letterSpacing: ".16em", textTransform: "uppercase" }}>CFO Decision Bench · AC Manufacturing</div>
@@ -599,7 +604,7 @@ export default function App() {
           {NAV.map(v => { const I = v.icon; return (
             <button key={v.id} onClick={() => setView(v.id)} style={navBtn(v.id)}><I size={11} />{v.label}</button>
           ); })}
-          <button onClick={() => setCopOpen(true)} style={{ padding: "6px 13px", background: "linear-gradient(135deg,rgba(212,165,116,0.18),rgba(184,132,140,0.12))", border: "1px solid rgba(212,165,116,0.4)", color: T.tx, cursor: "pointer", fontSize: 10, fontFamily: "inherit", display: "flex", alignItems: "center", gap: 5 }}>
+          <button onClick={() => setCopOpen(true)} style={{ padding: "6px 13px", background: "linear-gradient(135deg,rgba(255,230,0,0.18),rgba(184,132,140,0.12))", border: "1px solid rgba(255,230,0,0.5)", color: T.tx, cursor: "pointer", fontSize: 10, fontFamily: "inherit", display: "flex", alignItems: "center", gap: 5 }}>
             <Sparkles size={11} /> CFO Co-pilot
           </button>
         </div>
@@ -677,7 +682,7 @@ export default function App() {
                     {Object.entries(pnl.bom).sort((a, b) => b[1] - a[1]).map(([k, v]) => (
                       <div key={k} style={{ marginBottom: 7 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}>
-                          <span style={{ color: "#c8c1af" }}>{k}</span>
+                          <span style={{ color: "#c8c4d8" }}>{k}</span>
                           <span style={{ fontFamily: "'JetBrains Mono', monospace", color: T.tx }}>{v}%</span>
                         </div>
                         <div style={{ height: 3, background: "rgba(255,255,255,0.03)" }}>
@@ -706,7 +711,7 @@ export default function App() {
                   {g.s.map(s => (
                     <div key={s.k} style={{ marginBottom: 10 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 3 }}>
-                        <span style={{ color: "#c8c1af" }}>{s.l}</span>
+                        <span style={{ color: "#c8c4d8" }}>{s.l}</span>
                         <span style={{ fontFamily: "'JetBrains Mono', monospace", color: T.gld, fontSize: 12 }}>{sc[s.k] >= 0 ? "+" : ""}{sc[s.k]}{s.u}</span>
                       </div>
                       <input type="range" min={s.min} max={s.max} step={1} value={sc[s.k]}
@@ -733,7 +738,7 @@ export default function App() {
                     return (
                       <div key={p.l} style={{ marginBottom: 9 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}>
-                          <span style={{ color: "#c8c1af" }}>{p.l} <span style={{ color: T.dim, fontSize: 9 }}>{p.v >= 0 ? "+" : ""}{p.v}{p.u}</span></span>
+                          <span style={{ color: "#c8c4d8" }}>{p.l} <span style={{ color: T.dim, fontSize: 9 }}>{p.v >= 0 ? "+" : ""}{p.v}{p.u}</span></span>
                           <span style={{ fontFamily: "'JetBrains Mono', monospace", color: p.b >= 0 ? T.grn : T.red, fontSize: 12 }}>{fmtBps(p.b)}</span>
                         </div>
                         <div style={{ height: 4, background: "rgba(255,255,255,0.03)" }}>
@@ -744,9 +749,9 @@ export default function App() {
                   })
                 }
               </div>
-              <div style={{ padding: "10px 13px", background: "rgba(212,165,116,0.04)", border: "1px solid rgba(212,165,116,0.18)", display: "flex", gap: 8, alignItems: "flex-start" }}>
+              <div style={{ padding: "10px 13px", background: "rgba(212,165,116,0.04)", border: "1px solid rgba(255,230,0,0.18)", display: "flex", gap: 8, alignItems: "flex-start" }}>
                 <AlertTriangle size={11} color={T.gld} style={{ marginTop: 2, flexShrink: 0 }} />
-                <div style={{ fontSize: 11, color: "#c8c1af", lineHeight: 1.65 }}>
+                <div style={{ fontSize: 11, color: "#c8c4d8", lineHeight: 1.65 }}>
                   <strong style={{ color: T.gld }}>Finance & Risk:</strong> Lever interactions can dampen combined impact 10–20%. Use Lever Library for precision deep-dives, then ask the Co-pilot to reconcile.
                 </div>
               </div>
@@ -775,19 +780,19 @@ export default function App() {
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                   {portfolio.sel.map(l => (
-                    <span key={l.id} style={{ fontSize: 10, padding: "2px 8px", background: "rgba(255,255,255,0.03)", border: `1px solid ${T.brd}`, color: "#c8c1af" }}>
+                    <span key={l.id} style={{ fontSize: 10, padding: "2px 8px", background: "rgba(255,255,255,0.03)", border: `1px solid ${T.brd}`, color: "#c8c4d8" }}>
                       {l.title.slice(0, 22)}… <strong>+{bpsFor(l)} bps</strong> @ {levSliders[l.id]}{l.sl.unit}
                     </span>
                   ))}
                 </div>
-                <div style={{ marginTop: 10, padding: "7px 11px", background: "rgba(184,132,140,0.07)", border: "1px solid rgba(184,132,140,0.2)", fontSize: 10, color: "#c8c1af", lineHeight: 1.6 }}>
+                <div style={{ marginTop: 10, padding: "7px 11px", background: "rgba(184,132,140,0.07)", border: "1px solid rgba(184,132,140,0.2)", fontSize: 10, color: "#c8c4d8", lineHeight: 1.6 }}>
                   Finance & Risk: combined impact may be 10–20% lower than sum due to lever interactions. Ask Co-pilot to reconcile before board.
                 </div>
               </div>
             )}
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 13, flexWrap: "wrap", gap: 6 }}>
-              <div style={{ fontSize: 11, color: T.sub }}>13 plays — dial each lever · Select to build portfolio · <strong style={{ color: "#c8c1af" }}>✦ Bench</strong> for live agent reasoning</div>
+              <div style={{ fontSize: 11, color: T.sub }}>13 plays — dial each lever · Select to build portfolio · <strong style={{ color: "#c8c4d8" }}>✦ Bench</strong> for live agent reasoning</div>
               <div style={{ fontSize: 10, color: T.dim, background: T.s3, padding: "3px 9px", border: `1px solid ${T.brd}` }}>
                 Σ current settings: {LEVERS.reduce((a, l) => a + bpsFor(l), 0)} bps
               </div>
@@ -821,7 +826,7 @@ export default function App() {
                     {/* Card slider */}
                     <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid rgba(255,255,255,0.05)`, padding: "9px 11px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-                        <span style={{ fontSize: 10, color: "#c8c1af" }}>{l.sl.lbl}</span>
+                        <span style={{ fontSize: 10, color: "#c8c4d8" }}>{l.sl.lbl}</span>
                         <span>
                           <span style={{ fontSize: 17, fontFamily: "'Fraunces', Georgia, serif", color: l.color }}>{v}</span>
                           <span style={{ fontSize: 9, color: T.sub, marginLeft: 2 }}>{l.sl.unit}</span>
@@ -862,7 +867,7 @@ export default function App() {
                     {isExp && (
                       <div style={{ borderTop: `1px solid rgba(255,255,255,0.05)`, paddingTop: 8 }}>
                         <div style={{ fontSize: 8, letterSpacing: ".13em", textTransform: "uppercase", color: T.dim, marginBottom: 5 }}>Dependencies</div>
-                        <ul style={{ paddingLeft: 13, fontSize: 10, color: "#c8c1af", lineHeight: 1.9 }}>
+                        <ul style={{ paddingLeft: 13, fontSize: 10, color: "#c8c4d8", lineHeight: 1.9 }}>
                           {l.deps.map(d => <li key={d}>{d}</li>)}
                         </ul>
                       </div>
@@ -925,7 +930,7 @@ export default function App() {
             {/* Modal slider */}
             <div style={{ padding: "15px 21px", borderBottom: `1px solid ${T.brd}`, background: "rgba(212,165,116,0.04)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 7 }}>
-                <span style={{ fontSize: 11, color: "#c8c1af" }}>{activeLever.sl.lbl}</span>
+                <span style={{ fontSize: 11, color: "#c8c4d8" }}>{activeLever.sl.lbl}</span>
                 <span>
                   <span style={{ fontSize: 26, fontFamily: "'Fraunces', Georgia, serif", color: T.gld, lineHeight: 1 }}>{modalV}</span>
                   <span style={{ fontSize: 11, color: T.sub, marginLeft: 3 }}>{activeLever.sl.unit}</span>
@@ -961,7 +966,7 @@ export default function App() {
             <div style={{ padding: "16px 21px" }}>
               <div style={{ fontSize: 8, letterSpacing: ".17em", textTransform: "uppercase", color: T.sub, marginBottom: 12 }}>Bench view — specialists reason at your chosen setting</div>
               <button onClick={runBench} disabled={benchRunning}
-                style={{ width: "100%", padding: 10, background: "linear-gradient(135deg,rgba(212,165,116,0.18),rgba(184,132,140,0.12))", border: "1px solid rgba(212,165,116,0.4)", color: T.gld, fontSize: 11, fontFamily: "inherit", cursor: benchRunning ? "not-allowed" : "pointer", letterSpacing: ".07em", marginBottom: 13, opacity: benchRunning ? .5 : 1 }}>
+                style={{ width: "100%", padding: 10, background: "linear-gradient(135deg,rgba(255,230,0,0.18),rgba(184,132,140,0.12))", border: "1px solid rgba(255,230,0,0.5)", color: T.gld, fontSize: 11, fontFamily: "inherit", cursor: benchRunning ? "not-allowed" : "pointer", letterSpacing: ".07em", marginBottom: 13, opacity: benchRunning ? .5 : 1 }}>
                 {benchRunning ? "Running bench analysis…" : `✦ Run bench at ${modalV} ${activeLever.sl.unit}`}
               </button>
 
@@ -979,7 +984,7 @@ export default function App() {
 
               <div style={{ marginTop: 14, padding: "10px 13px", background: "rgba(212,165,116,0.04)", border: "1px solid rgba(212,165,116,0.17)" }}>
                 <div style={{ fontSize: 8, letterSpacing: ".14em", textTransform: "uppercase", color: T.gld, marginBottom: 6 }}>Dependencies & pre-requisites</div>
-                <ul style={{ paddingLeft: 14, fontSize: 11, color: "#c8c1af", lineHeight: 1.9 }}>
+                <ul style={{ paddingLeft: 14, fontSize: 11, color: "#c8c4d8", lineHeight: 1.9 }}>
                   {activeLever.deps.map(d => <li key={d}>{d}</li>)}
                 </ul>
               </div>
@@ -1014,7 +1019,7 @@ export default function App() {
                   <div style={{ fontSize: 8, letterSpacing: ".15em", textTransform: "uppercase", color: T.dim, marginBottom: 8 }}>Try asking</div>
                   {STARTERS.map(q => (
                     <button key={q} onClick={() => setChatInp(q)}
-                      style={{ display: "block", width: "100%", textAlign: "left", padding: "8px 10px", marginBottom: 4, background: "rgba(255,255,255,0.02)", border: `1px solid rgba(255,255,255,0.05)`, color: "#c8c1af", fontSize: 10, cursor: "pointer", fontFamily: "inherit", lineHeight: 1.55 }}>
+                      style={{ display: "block", width: "100%", textAlign: "left", padding: "8px 10px", marginBottom: 4, background: "rgba(255,255,255,0.02)", border: `1px solid rgba(255,255,255,0.05)`, color: "#c8c4d8", fontSize: 10, cursor: "pointer", fontFamily: "inherit", lineHeight: 1.55 }}>
                       {q}
                     </button>
                   ))}
