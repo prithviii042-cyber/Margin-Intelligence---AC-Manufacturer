@@ -30,6 +30,61 @@ const SEED = {
   ch: { "General Trade": 45, "Modern Trade": 20, "E-commerce": 25, "B2B/Projects": 10 },
 };
 
+// ── SKU / PRODUCT PROFILES ────────────────────────────────────
+const SKU_PROFILES = [
+  {
+    id: "inv15_5s", label: "1.5TR 5\u2605 Inverter", tag: "Premium Mid",
+    companyName: "Himcool Appliances Ltd (illustrative)", period: "FY26 (TTM)", isUploaded: false,
+    units: 1450000,
+    rev:  { gross: 5120, scheme: 320, cd: 85,  vr: 140, sp: 75,  net: 4500 },
+    cogs: { bom: 2180,  conv: 520,   inf: 210, duty: 105, total: 3015 },
+    below:{ ofr: 165, war: 95,  ins: 70,  aap: 220, tmk: 115, soh: 180, coh: 230, rd: 45 },
+    bom:  { Compressor: 29, "Copper Tubing": 14, "Aluminium Fins": 10, "PCB/Controller": 11, Plastics: 8, "Steel Chassis": 6, Motor: 7, Packaging: 4, Refrigerant: 3, Other: 8 },
+    ch:   { "General Trade": 45, "Modern Trade": 20, "E-commerce": 25, "B2B/Projects": 10 },
+  },
+  {
+    id: "inv15_3s", label: "1.5TR 3\u2605 Inverter", tag: "Entry Mid",
+    companyName: "Himcool Appliances Ltd (illustrative)", period: "FY26 (TTM)", isUploaded: false,
+    units: 2100000,
+    rev:  { gross: 5880, scheme: 530, cd: 118, vr: 177, sp: 87,  net: 4968 },
+    cogs: { bom: 2484,  conv: 595,   inf: 248, duty: 149, total: 3476 },
+    below:{ ofr: 198, war: 124, ins: 99,  aap: 248, tmk: 149, soh: 198, coh: 248, rd: 50 },
+    bom:  { Compressor: 31, "Copper Tubing": 13, "Aluminium Fins": 10, "PCB/Controller": 9, Plastics: 9, "Steel Chassis": 7, Motor: 8, Packaging: 5, Refrigerant: 3, Other: 5 },
+    ch:   { "General Trade": 55, "Modern Trade": 18, "E-commerce": 20, "B2B/Projects": 7 },
+  },
+  {
+    id: "inv2t_5s", label: "2TR 5\u2605 Inverter", tag: "Premium Large",
+    companyName: "Himcool Appliances Ltd (illustrative)", period: "FY26 (TTM)", isUploaded: false,
+    units: 800000,
+    rev:  { gross: 4800, scheme: 240, cd: 72,  vr: 96,  sp: 48,  net: 4344 },
+    cogs: { bom: 1868,  conv: 435,   inf: 174, duty: 87,  total: 2564 },
+    below:{ ofr: 130, war: 87,  ins: 65,  aap: 217, tmk: 87,  soh: 130, coh: 174, rd: 65 },
+    bom:  { Compressor: 32, "Copper Tubing": 15, "Aluminium Fins": 11, "PCB/Controller": 11, Plastics: 7, "Steel Chassis": 7, Motor: 8, Packaging: 3, Refrigerant: 3, Other: 3 },
+    ch:   { "General Trade": 38, "Modern Trade": 25, "E-commerce": 22, "B2B/Projects": 15 },
+  },
+  {
+    id: "fs15", label: "1.5TR Fixed Speed", tag: "Economy",
+    companyName: "Himcool Appliances Ltd (illustrative)", period: "FY26 (TTM)", isUploaded: false,
+    units: 3000000,
+    rev:  { gross: 6000, scheme: 600, cd: 120, vr: 180, sp: 60,  net: 5040 },
+    cogs: { bom: 2671,  conv: 605,   inf: 252, duty: 151, total: 3679 },
+    below:{ ofr: 201, war: 151, ins: 101, aap: 252, tmk: 151, soh: 201, coh: 252, rd: 50 },
+    bom:  { Compressor: 34, "Copper Tubing": 12, "Aluminium Fins": 10, "PCB/Controller": 7, Plastics: 11, "Steel Chassis": 8, Motor: 9, Packaging: 5, Refrigerant: 4, Other: 0 },
+    ch:   { "General Trade": 65, "Modern Trade": 15, "E-commerce": 12, "B2B/Projects": 8 },
+  },
+  {
+    id: "cassette", label: "Cassette / Comm.", tag: "B2B",
+    companyName: "Himcool Appliances Ltd (illustrative)", period: "FY26 (TTM)", isUploaded: false,
+    units: 200000,
+    rev:  { gross: 2400, scheme: 60,  cd: 48,  vr: 24,  sp: 12,  net: 2256 },
+    cogs: { bom:  992,   conv: 270,   inf: 90,  duty: 68,  total: 1420 },
+    below:{ ofr: 68,  war: 113, ins: 45,  aap: 45,  tmk: 90,  soh: 90,  coh: 90,  rd: 113 },
+    bom:  { Compressor: 30, "Copper Tubing": 16, "Aluminium Fins": 13, "PCB/Controller": 12, Plastics: 0, "Steel Chassis": 12, Motor: 8, Packaging: 2, Refrigerant: 4, Other: 3 },
+    ch:   { "General Trade": 15, "Modern Trade": 5, "E-commerce": 8, "B2B/Projects": 72 },
+  },
+];
+
+
 const deriveMargins = (p) => {
   const nr = p.rev.net;
   const gm = nr - p.cogs.total;
@@ -264,7 +319,11 @@ function parsePnLFile(file) {
     reader.onload = (e) => {
       try {
         const wb = XLSX.read(e.target.result, { type: "array" });
-        const ws = wb.Sheets[wb.SheetNames[0]];
+        // Multi-sheet: each sheet = one SKU profile
+        const sheetsToParse = wb.SheetNames.length > 1 ? wb.SheetNames : [wb.SheetNames[0]];
+        const results = [];
+        for (const sheetName of sheetsToParse) {
+        const ws = wb.Sheets[sheetName];
         const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
 
         // Build a label → value map (case-insensitive, trim)
@@ -313,7 +372,16 @@ function parsePnLFile(file) {
         if (get("corporate overhead", "corporate oh", "admin")) parsed.below.coh = get("corporate overhead", "corporate oh", "admin");
         if (get("r&d", "research")) parsed.below.rd = get("r&d", "research");
 
-        resolve(parsed);
+        parsed.id = sheetsToParse.length > 1
+          ? sheetName.toLowerCase().replace(/\s+/g, "_")
+          : "uploaded";
+        parsed.label = sheetName;
+        parsed.companyName = sheetsToParse.length > 1
+          ? sheetName + " (uploaded)"
+          : file.name.replace(/\.[^/.]+$/, "") + " (uploaded)";
+        results.push(parsed);
+        } // end for sheetsToParse
+        resolve(results.length === 1 ? results[0] : results);
       } catch (err) {
         reject(err);
       }
@@ -449,8 +517,10 @@ function UploadPanel({ onUpload, uploadStatus }) {
 
 // ── MAIN APP ──────────────────────────────────────────────────
 export default function App() {
-  const [pnl, setPnl]         = useState(SEED);
-  const [uploadStatus, setUS] = useState("");
+  const [skuProfiles, setSkuProfiles]   = useState(SKU_PROFILES);
+  const [selectedSkuId, setSelSku]      = useState("inv15_5s");
+  const [skuDropOpen, setSkuDropOpen]   = useState(false);
+  const [uploadStatus, setUS]           = useState("");
   const [view, setView]       = useState("cmd");
   const [showUpload, setSU]   = useState(false);
 
@@ -476,6 +546,7 @@ export default function App() {
   const [chatLoading, setChatLd]= useState(false);
   const chatBodyRef             = useRef(null);
 
+  const pnl  = useMemo(() => skuProfiles.find(s => s.id === selectedSkuId) || skuProfiles[0], [skuProfiles, selectedSkuId]);
   const base = useMemo(() => deriveMargins(pnl), [pnl]);
 
   // Scenario impact
@@ -502,7 +573,13 @@ export default function App() {
   // ── HANDLERS ────────────────────────────────────────────────
   const handleUpload = (parsed, status) => {
     setUS(status);
-    if (parsed) { setPnl(parsed); setSU(false); setLevAn({}); }
+    if (parsed) {
+      // Multi-sheet upload returns array; single-sheet returns object
+      const profiles = Array.isArray(parsed) ? parsed : [parsed];
+      setSkuProfiles(profiles);
+      setSelSku(profiles[0].id);
+      setSU(false); setLevAn({});
+    }
   };
 
   const onCardSlide = (id, v) => {
@@ -583,7 +660,7 @@ export default function App() {
   const [mEff, mEffNote]   = activeLever ? activeLever.effL(modalV)  : ["—", ""];
 
   return (
-    <div style={{ minHeight: "100vh", background: T.bg, color: T.tx, fontFamily: "'Inter Tight', -apple-system, sans-serif", backgroundImage: "radial-gradient(ellipse at 50% 0%, rgba(255,230,0,0.06), transparent 55%)" }}>
+    <div onClick={(e) => { if (skuDropOpen && !e.target.closest("[data-sku-drop]")) setSkuDropOpen(false); }} style={{ minHeight: "100vh", background: T.bg, color: T.tx, fontFamily: "'Inter Tight', -apple-system, sans-serif", backgroundImage: "radial-gradient(ellipse at 50% 0%, rgba(255,230,0,0.06), transparent 55%)" }}>
       <style>{styles}</style>
 
       {/* ── HEADER ── */}
@@ -612,8 +689,8 @@ export default function App() {
 
       <main style={{ maxWidth: 1280, margin: "0 auto", padding: "22px 22px 100px" }}>
 
-        {/* Company strip */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 20, paddingBottom: 14, borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+        {/* Company strip + SKU filter */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, paddingBottom: 14, borderBottom: "1px solid rgba(255,255,255,0.05)", flexWrap: "wrap", gap: 12 }}>
           <div>
             <div style={{ fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: T.sub, marginBottom: 3 }}>
               {pnl.isUploaded ? "Client · Uploaded Data" : "Client · Illustrative Synthetic Data"}
@@ -621,12 +698,51 @@ export default function App() {
             <div style={{ fontSize: 20, fontFamily: "'Fraunces', Georgia, serif" }}>{pnl.companyName}</div>
             <div style={{ fontSize: 10, color: T.sub, marginTop: 2 }}>{pnl.period} · India Residential AC · {(pnl.units / 1e6).toFixed(2)}M units</div>
           </div>
-          {pnl.isUploaded && (
-            <button onClick={() => { setPnl(SEED); setUS(""); setLevAn({}); }}
-              style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 11px", background: "transparent", border: `1px solid ${T.brd}`, color: T.sub, cursor: "pointer", fontSize: 10, fontFamily: "inherit" }}>
-              <RefreshCw size={10} /> Reset to demo data
-            </button>
-          )}
+          {/* SKU Dropdown + Reset */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {/* SKU Dropdown */}
+            <div style={{ position: "relative" }}>
+              <button
+                onClick={() => setSkuDropOpen(o => !o)}
+                style={{ display: "flex", alignItems: "center", gap: 7, padding: "7px 12px", background: T.s3, border: `1px solid ${T.brd}`, color: T.tx, cursor: "pointer", fontSize: 11, fontFamily: "inherit", minWidth: 200 }}
+              >
+                <span style={{ fontSize: 8, letterSpacing: ".12em", textTransform: "uppercase", color: T.dim, marginRight: 2 }}>SKU</span>
+                <span style={{ flex: 1, textAlign: "left" }}>{pnl.label || skuProfiles.find(s => s.id === selectedSkuId)?.label || "Select SKU"}</span>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: T.gld, fontWeight: 700, background: "rgba(255,230,0,0.1)", padding: "1px 5px" }}>
+                  {Number(deriveMargins(pnl).ebP).toFixed(1)}%
+                </span>
+                <ChevronDown size={11} color={T.dim} style={{ transform: skuDropOpen ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
+              </button>
+              {skuDropOpen && (
+                <div style={{ position: "absolute", top: "calc(100% + 4px)", right: 0, zIndex: 50, background: "#1e1e2e", border: `1px solid ${T.brd}`, minWidth: 240, boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}>
+                  {skuProfiles.map(s => {
+                    const m = deriveMargins(s);
+                    const isActive = s.id === selectedSkuId;
+                    return (
+                      <button key={s.id} onClick={() => { setSelSku(s.id); setSkuDropOpen(false); }}
+                        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "9px 13px", background: isActive ? "rgba(255,230,0,0.1)" : "transparent", border: "none", borderBottom: `1px solid rgba(255,255,255,0.04)`, color: isActive ? T.gld : T.tx, cursor: "pointer", fontSize: 11, fontFamily: "inherit", textAlign: "left" }}
+                      >
+                        <div>
+                          <div style={{ fontWeight: isActive ? 600 : 400 }}>{s.label}</div>
+                          <div style={{ fontSize: 9, color: T.dim, marginTop: 1 }}>{(s.units / 1e6).toFixed(2)}M units · Net {fmtCr(s.rev.net)}</div>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2 }}>
+                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: isActive ? T.gld : T.sub, fontWeight: 700 }}>{m.ebP.toFixed(1)}%</span>
+                          <span style={{ fontSize: 8, color: T.dim }}>EBITDA</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            {pnl.isUploaded && (
+              <button onClick={() => { setSkuProfiles(SKU_PROFILES); setSelSku("inv15_5s"); setUS(""); setLevAn({}); }}
+                style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 11px", background: "transparent", border: `1px solid ${T.brd}`, color: T.sub, cursor: "pointer", fontSize: 10, fontFamily: "inherit" }}>
+                <RefreshCw size={10} /> Reset to demo
+              </button>
+            )}
+          </div>
         </div>
 
         {/* ══════════════ COMMAND CENTRE ══════════════ */}
