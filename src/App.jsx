@@ -33,6 +33,14 @@ const SEED = {
 // ── SKU / PRODUCT PROFILES ────────────────────────────────────
 const SKU_PROFILES = [
   {
+    id: "all", label: "All SKUs", tag: "Portfolio",
+    companyName: "Himcool Appliances Ltd (illustrative)", period: "FY26 (TTM)", isUploaded: false,
+    units: 0, rev:{gross:0,scheme:0,cd:0,vr:0,sp:0,net:0}, cogs:{bom:0,conv:0,inf:0,duty:0,total:0},
+    below:{ofr:0,war:0,ins:0,aap:0,tmk:0,soh:0,coh:0,rd:0},
+    bom:{Compressor:29,"Copper Tubing":14,"Aluminium Fins":10,"PCB/Controller":11,Plastics:8,"Steel Chassis":6,Motor:7,Packaging:4,Refrigerant:3,Other:8},
+    ch:{"General Trade":45,"Modern Trade":20,"E-commerce":25,"B2B/Projects":10},
+  },
+  {
     id: "inv15_5s", label: "1.5TR 5\u2605 Inverter", tag: "Premium Mid",
     companyName: "Himcool Appliances Ltd (illustrative)", period: "FY26 (TTM)", isUploaded: false,
     units: 1450000,
@@ -83,6 +91,93 @@ const SKU_PROFILES = [
     ch:   { "General Trade": 15, "Modern Trade": 5, "E-commerce": 8, "B2B/Projects": 72 },
   },
 ];
+
+// ── 3-YEAR TREND DATA ─────────────────────────────────────────
+const TREND_PERIODS = ["FY24", "FY25", "FY26"];
+const TREND_DATA = {
+  inv15_5s: [
+    { period:"FY24", rev:{gross:4520,scheme:295,cd:78,vr:128,sp:68,net:3951}, cogs:{bom:1960,conv:474,inf:192,duty:98,total:2724}, below:{ofr:150,war:88,ins:64,aap:200,tmk:104,soh:164,coh:210,rd:40} },
+    { period:"FY25", rev:{gross:4820,scheme:308,cd:82,vr:134,sp:72,net:4224}, cogs:{bom:2068,conv:496,inf:200,duty:101,total:2865}, below:{ofr:158,war:91,ins:67,aap:210,tmk:110,soh:172,coh:220,rd:42} },
+    { period:"FY26", rev:{gross:5120,scheme:320,cd:85,vr:140,sp:75,net:4500}, cogs:{bom:2180,conv:520,inf:210,duty:105,total:3015}, below:{ofr:165,war:95,ins:70,aap:220,tmk:115,soh:180,coh:230,rd:45} },
+  ],
+  inv15_3s: [
+    { period:"FY24", rev:{gross:5200,scheme:450,cd:104,vr:156,sp:78,net:4412}, cogs:{bom:2118,conv:530,inf:221,duty:132,total:3001}, below:{ofr:176,war:110,ins:88,aap:220,tmk:132,soh:176,coh:220,rd:44} },
+    { period:"FY25", rev:{gross:5560,scheme:490,cd:111,vr:167,sp:83,net:4709}, cogs:{bom:2307,conv:565,inf:235,duty:141,total:3248}, below:{ofr:188,war:117,ins:94,aap:235,tmk:141,soh:188,coh:235,rd:47} },
+    { period:"FY26", rev:{gross:5880,scheme:530,cd:118,vr:177,sp:87,net:4968}, cogs:{bom:2484,conv:595,inf:248,duty:149,total:3476}, below:{ofr:198,war:124,ins:99,aap:248,tmk:149,soh:198,coh:248,rd:50} },
+  ],
+  inv2t_5s: [
+    { period:"FY24", rev:{gross:3960,scheme:198,cd:59,vr:79,sp:40,net:3584}, cogs:{bom:1600,conv:372,inf:143,duty:72,total:2187}, below:{ofr:107,war:72,ins:54,aap:179,tmk:72,soh:107,coh:143,rd:54} },
+    { period:"FY25", rev:{gross:4320,scheme:216,cd:65,vr:86,sp:43,net:3910}, cogs:{bom:1710,conv:400,inf:156,duty:78,total:2344}, below:{ofr:117,war:78,ins:59,aap:195,tmk:78,soh:117,coh:156,rd:59} },
+    { period:"FY26", rev:{gross:4800,scheme:240,cd:72,vr:96,sp:48,net:4344}, cogs:{bom:1868,conv:435,inf:174,duty:87,total:2564}, below:{ofr:130,war:87,ins:65,aap:217,tmk:87,soh:130,coh:174,rd:65} },
+  ],
+  fs15: [
+    { period:"FY24", rev:{gross:5200,scheme:520,cd:104,vr:156,sp:52,net:4368}, cogs:{bom:2400,conv:546,inf:218,duty:131,total:3295}, below:{ofr:175,war:131,ins:87,aap:218,tmk:131,soh:175,coh:218,rd:44} },
+    { period:"FY25", rev:{gross:5600,scheme:560,cd:112,vr:168,sp:56,net:4704}, cogs:{bom:2540,conv:576,inf:235,duty:141,total:3492}, below:{ofr:188,war:141,ins:94,aap:235,tmk:141,soh:188,coh:235,rd:47} },
+    { period:"FY26", rev:{gross:6000,scheme:600,cd:120,vr:180,sp:60,net:5040}, cogs:{bom:2671,conv:605,inf:252,duty:151,total:3679}, below:{ofr:201,war:151,ins:101,aap:252,tmk:151,soh:201,coh:252,rd:50} },
+  ],
+  cassette: [
+    { period:"FY24", rev:{gross:1920,scheme:48,cd:38,vr:19,sp:10,net:1805}, cogs:{bom:778,conv:216,inf:72,duty:54,total:1120}, below:{ofr:54,war:90,ins:36,aap:36,tmk:72,soh:72,coh:72,rd:90} },
+    { period:"FY25", rev:{gross:2160,scheme:54,cd:43,vr:22,sp:11,net:2030}, cogs:{bom:872,conv:243,inf:81,duty:61,total:1257}, below:{ofr:61,war:101,ins:41,aap:41,tmk:81,soh:81,coh:81,rd:101} },
+    { period:"FY26", rev:{gross:2400,scheme:60,cd:48,vr:24,sp:12,net:2256}, cogs:{bom:992,conv:270,inf:90,duty:68,total:1420}, below:{ofr:68,war:113,ins:45,aap:45,tmk:90,soh:90,coh:90,rd:113} },
+  ],
+};
+
+// ── PEER BENCHMARK DATA ───────────────────────────────────────
+const PEERS = [
+  { name:"Voltas",       color:"#7eb8d4", isQuartile:false,
+    data:[{period:"FY24",gmP:32.1,ebP:7.2,leakagePct:10.2,ctP:20.1},{period:"FY25",gmP:33.4,ebP:8.1,leakagePct:9.8,ctP:21.4},{period:"FY26",gmP:34.2,ebP:8.6,leakagePct:9.5,ctP:22.0}] },
+  { name:"Blue Star",    color:"#9dc4a8", isQuartile:false,
+    data:[{period:"FY24",gmP:30.5,ebP:6.5,leakagePct:11.5,ctP:18.5},{period:"FY25",gmP:31.2,ebP:7.0,leakagePct:11.0,ctP:19.2},{period:"FY26",gmP:32.0,ebP:7.4,leakagePct:10.8,ctP:20.0}] },
+  { name:"Daikin India", color:"#d4c574", isQuartile:false,
+    data:[{period:"FY24",gmP:35.0,ebP:10.2,leakagePct:8.5,ctP:24.5},{period:"FY25",gmP:36.1,ebP:11.0,leakagePct:8.0,ctP:25.8},{period:"FY26",gmP:37.2,ebP:11.8,leakagePct:7.8,ctP:26.5}] },
+  { name:"Havells AC",   color:"#d48ca5", isQuartile:false,
+    data:[{period:"FY24",gmP:28.5,ebP:5.8,leakagePct:13.2,ctP:17.0},{period:"FY25",gmP:29.2,ebP:6.2,leakagePct:12.8,ctP:17.8},{period:"FY26",gmP:29.8,ebP:6.5,leakagePct:12.5,ctP:18.2}] },
+  { name:"Top Quartile",    color:"#ffe600", isQuartile:true,
+    data:[{period:"FY24",gmP:36.0,ebP:11.0,leakagePct:7.5,ctP:25.0},{period:"FY25",gmP:37.2,ebP:12.0,leakagePct:7.2,ctP:26.0},{period:"FY26",gmP:38.0,ebP:12.5,leakagePct:7.0,ctP:27.0}] },
+  { name:"Median",          color:"#9998a8", isQuartile:true,
+    data:[{period:"FY24",gmP:31.0,ebP:7.5,leakagePct:10.5,ctP:20.0},{period:"FY25",gmP:32.0,ebP:8.0,leakagePct:10.0,ctP:21.0},{period:"FY26",gmP:33.0,ebP:8.5,leakagePct:9.8,ctP:21.8}] },
+  { name:"Bottom Quartile", color:"#6b6878", isQuartile:true,
+    data:[{period:"FY24",gmP:26.0,ebP:4.5,leakagePct:13.5,ctP:15.0},{period:"FY25",gmP:27.0,ebP:5.0,leakagePct:13.0,ctP:15.8},{period:"FY26",gmP:28.0,ebP:5.5,leakagePct:12.5,ctP:16.5}] },
+];
+
+// ── BLEND / TREND HELPERS ─────────────────────────────────────
+const blendProfiles = (profiles) => {
+  const real = profiles.filter(p => p && p.id !== "all" && p.rev && p.rev.net > 0);
+  if (!real.length) return profiles[0];
+  const sum = (fn) => real.reduce((a, p) => a + fn(p), 0);
+  const totalNr = sum(p => p.rev.net);
+  const bomKeys = Object.keys(real[0].bom);
+  const blendedBom = {};
+  bomKeys.forEach(k => { blendedBom[k] = real.reduce((a,p) => a + (p.bom[k]||0)*(p.rev.net/totalNr), 0); });
+  const chKeys = Object.keys(real[0].ch);
+  const blendedCh = {};
+  chKeys.forEach(k => { blendedCh[k] = real.reduce((a,p) => a + (p.ch[k]||0)*(p.rev.net/totalNr), 0); });
+  return {
+    id:"all", label:"All SKUs", tag:"Portfolio", isUploaded: real[0].isUploaded,
+    companyName: real[0].companyName, period: real[0].period,
+    units: sum(p => p.units),
+    rev:  { gross:sum(p=>p.rev.gross), scheme:sum(p=>p.rev.scheme), cd:sum(p=>p.rev.cd), vr:sum(p=>p.rev.vr), sp:sum(p=>p.rev.sp), net:totalNr },
+    cogs: { bom:sum(p=>p.cogs.bom), conv:sum(p=>p.cogs.conv), inf:sum(p=>p.cogs.inf), duty:sum(p=>p.cogs.duty), total:sum(p=>p.cogs.total) },
+    below:{ ofr:sum(p=>p.below.ofr), war:sum(p=>p.below.war), ins:sum(p=>p.below.ins), aap:sum(p=>p.below.aap), tmk:sum(p=>p.below.tmk), soh:sum(p=>p.below.soh), coh:sum(p=>p.below.coh), rd:sum(p=>p.below.rd) },
+    bom: blendedBom, ch: blendedCh,
+  };
+};
+
+const getTrend = (skuId) => {
+  if (skuId === "all") {
+    return TREND_PERIODS.map((_, i) => {
+      const slices = Object.entries(TREND_DATA).map(([id, arr]) => ({...arr[i], id}));
+      return blendProfiles(slices);
+    });
+  }
+  return TREND_DATA[skuId] || [];
+};
+
+const verdictFor = (ebP) =>
+  ebP >= 10 ? { label:"★ Star", color:"#ffe600" }
+  : ebP >= 7 ? { label:"✓ Core", color:"#2db757" }
+  : ebP >= 5 ? { label:"⚠ Watch", color:"#d4c574" }
+  : { label:"✗ Drag", color:"#e4526b" };
 
 
 const deriveMargins = (p) => {
@@ -541,12 +636,16 @@ export default function App() {
 
   // Co-pilot state
   const [copOpen, setCopOpen]   = useState(false);
+  const [peerMetric, setPeerMetric] = useState("ebP");
   const [chatHistory, setChat]  = useState([]);
   const [chatInput, setChatInp] = useState("");
   const [chatLoading, setChatLd]= useState(false);
   const chatBodyRef             = useRef(null);
 
-  const pnl  = useMemo(() => skuProfiles.find(s => s.id === selectedSkuId) || skuProfiles[0], [skuProfiles, selectedSkuId]);
+  const pnl  = useMemo(() => {
+    if (selectedSkuId === "all") return blendProfiles(skuProfiles.filter(s => s.id !== "all"));
+    return skuProfiles.find(s => s.id === selectedSkuId) || skuProfiles[0];
+  }, [skuProfiles, selectedSkuId]);
   const base = useMemo(() => deriveMargins(pnl), [pnl]);
 
   // Scenario impact
@@ -748,13 +847,228 @@ export default function App() {
         {/* ══════════════ COMMAND CENTRE ══════════════ */}
         {view === "cmd" && (
           <div className="fade">
+
+            {/* KPI Strip — always shown */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 9, marginBottom: 20 }}>
               <Kpi label="Net Revenue"       value={fmtCr(base.nr)}          sub={`Gross ${fmtCr(pnl.rev.gross)}`} />
-              <Kpi label="Gross Margin"      value={fmtPct(base.gmP)}         sub={fmtCr(base.gm)}   delta={0} />
-              <Kpi label="Contribution"      value={fmtPct(base.ctP)}         sub={fmtCr(base.ct)}   delta={0} />
+              <Kpi label="Gross Margin"      value={fmtPct(base.gmP)}         sub={fmtCr(base.gm)}   delta={selectedSkuId==="all"?undefined:0} />
+              <Kpi label="Contribution"      value={fmtPct(base.ctP)}         sub={fmtCr(base.ct)}   delta={selectedSkuId==="all"?undefined:0} />
               <Kpi label="EBITDA"            value={fmtPct(base.ebP)}         sub={fmtCr(base.eb)}   delta={base.ebP > 8 ? 15 : -10} />
               <Kpi label="Gross→Net Leakage" value={fmtPct(base.leakagePct)} sub={fmtCr(base.leakage)} delta={-28} />
             </div>
+
+            {/* ════════ ALL-SKUs PORTFOLIO VIEW ════════ */}
+            {selectedSkuId === "all" && (() => {
+              const realSkus = skuProfiles.filter(s => s.id !== "all" && s.rev.net > 0);
+              const totalNr  = realSkus.reduce((a,s) => a + s.rev.net, 0);
+              const totalEb  = realSkus.reduce((a,s) => a + deriveMargins(s).eb, 0);
+              const sortedSkus = [...realSkus].sort((a,b) => deriveMargins(b).ebP - deriveMargins(a).ebP);
+              const peerFY26   = PEERS.map(p => ({...p, val: p.data[2][peerMetric]}));
+              const himcoolVal = base[peerMetric];
+              const peerMax    = Math.max(...peerFY26.map(p=>p.val), himcoolVal) * 1.1;
+              return (
+                <div>
+                  {/* SKU Scorecard */}
+                  <div style={{ fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:T.sub, marginBottom:9 }}>SKU Profitability Scorecard — FY26</div>
+                  <div style={{ background:T.s3, border:`1px solid ${T.brd}`, marginBottom:22, overflowX:"auto" }}>
+                    <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
+                      <thead>
+                        <tr style={{ borderBottom:`1px solid ${T.brd}` }}>
+                          {["SKU","Category","Net Revenue","Rev Mix","GM%","Contribution%","EBITDA%","G→N Leakage","Verdict"].map(h=>(
+                            <th key={h} style={{ padding:"8px 12px", textAlign:h==="SKU"||h==="Category"?"left":"right", fontSize:8, letterSpacing:".12em", textTransform:"uppercase", color:T.dim, fontWeight:400 }}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortedSkus.map(s => {
+                          const m = deriveMargins(s);
+                          const vd = verdictFor(m.ebP);
+                          const revMix = (s.rev.net/totalNr*100).toFixed(1);
+                          return (
+                            <tr key={s.id} style={{ borderBottom:`1px solid rgba(255,255,255,0.03)` }}>
+                              <td style={{ padding:"9px 12px", color:T.tx, fontWeight:500 }}>{s.label}</td>
+                              <td style={{ padding:"9px 12px", color:T.dim, fontSize:9 }}>{s.tag}</td>
+                              <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", color:T.tx }}>{fmtCr(m.nr)}</td>
+                              <td style={{ padding:"9px 12px", textAlign:"right" }}>
+                                <div style={{ display:"flex", alignItems:"center", justifyContent:"flex-end", gap:5 }}>
+                                  <div style={{ width:40, height:3, background:"rgba(255,255,255,0.05)" }}><div style={{ width:`${revMix}%`, height:"100%", background:T.sub }} /></div>
+                                  <span style={{ fontFamily:"'JetBrains Mono',monospace", color:T.sub }}>{revMix}%</span>
+                                </div>
+                              </td>
+                              <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", color:m.gmP>=33?T.grn:T.tx }}>{fmtPct(m.gmP)}</td>
+                              <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", color:T.tx }}>{fmtPct(m.ctP)}</td>
+                              <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", fontWeight:600, color:m.ebP>=8?T.grn:m.ebP>=5?T.gld:T.red }}>{fmtPct(m.ebP)}</td>
+                              <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", color:m.leakagePct>12?T.red:T.tx }}>{fmtPct(m.leakagePct)}</td>
+                              <td style={{ padding:"9px 12px", textAlign:"right" }}>
+                                <span style={{ fontSize:9, padding:"2px 7px", background:`${vd.color}18`, border:`1px solid ${vd.color}44`, color:vd.color, whiteSpace:"nowrap" }}>{vd.label}</span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {/* Blended total row */}
+                        <tr style={{ borderTop:`1px solid ${T.brd}`, background:"rgba(255,230,0,0.04)" }}>
+                          <td style={{ padding:"9px 12px", color:T.gld, fontWeight:700 }} colSpan={2}>Blended Total</td>
+                          <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", color:T.gld, fontWeight:700 }}>{fmtCr(base.nr)}</td>
+                          <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", color:T.gld }}>100%</td>
+                          <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", color:T.gld }}>{fmtPct(base.gmP)}</td>
+                          <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", color:T.gld }}>{fmtPct(base.ctP)}</td>
+                          <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", color:T.gld, fontWeight:700 }}>{fmtPct(base.ebP)}</td>
+                          <td style={{ padding:"9px 12px", textAlign:"right", fontFamily:"'JetBrains Mono',monospace", color:T.gld }}>{fmtPct(base.leakagePct)}</td>
+                          <td />
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Row: Margin Bridge + Rev vs EBITDA Mix */}
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:22, marginBottom:22 }}>
+                    <div>
+                      <div style={{ fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:T.sub, marginBottom:9 }}>Portfolio Margin Bridge — EBITDA% Mix Impact</div>
+                      <div style={{ background:T.s3, border:`1px solid ${T.brd}`, padding:"15px 17px" }}>
+                        <div style={{ marginBottom:8, fontSize:9, color:T.dim }}>Best SKU baseline → impact of mixing each SKU into portfolio → blended EBITDA</div>
+                        {(() => {
+                          const best = sortedSkus[0];
+                          const bestEb = deriveMargins(best).ebP;
+                          const rows = [{ l:`${best.label} (best)`, v:bestEb, pos:true, isBase:true }];
+                          sortedSkus.slice(1).forEach(s => {
+                            const m = deriveMargins(s);
+                            const wt = s.rev.net / totalNr;
+                            const drag = (m.ebP - bestEb) * wt;
+                            rows.push({ l:`+ ${s.label}`, v:drag, pos:drag>=0 });
+                          });
+                          rows.push({ l:"Blended EBITDA", v:base.ebP, pos:true, isBase:true });
+                          const maxAbs = Math.max(...rows.map(r=>Math.abs(r.v)));
+                          return rows.map((r,i)=>(
+                            <div key={i} style={{ marginBottom:7 }}>
+                              <div style={{ display:"flex", justifyContent:"space-between", fontSize:11, marginBottom:2 }}>
+                                <span style={{ color:r.isBase?T.tx:T.sub }}>{r.l}</span>
+                                <span style={{ fontFamily:"'JetBrains Mono',monospace", color:r.pos?T.grn:T.red, fontWeight:r.isBase?600:400 }}>
+                                  {r.isBase ? fmtPct(r.v) : `${r.v>=0?"+":""}${r.v.toFixed(2)}pp`}
+                                </span>
+                              </div>
+                              <div style={{ height:r.isBase?5:3, background:"rgba(255,255,255,0.03)" }}>
+                                <div style={{ width:`${Math.min(100,Math.abs(r.v)/maxAbs*100)}%`, height:"100%", background:r.pos?T.grn:T.red, opacity:.65 }} />
+                              </div>
+                            </div>
+                          ));
+                        })()}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:T.sub, marginBottom:9 }}>Revenue Mix vs EBITDA Contribution — FY26</div>
+                      <div style={{ background:T.s3, border:`1px solid ${T.brd}`, padding:"15px 17px" }}>
+                        <div style={{ display:"flex", gap:16, marginBottom:12, fontSize:9, color:T.dim }}>
+                          <span><span style={{ display:"inline-block", width:10, height:3, background:T.sub, verticalAlign:"middle", marginRight:4 }} />Rev Mix%</span>
+                          <span><span style={{ display:"inline-block", width:10, height:3, background:T.gld, verticalAlign:"middle", marginRight:4 }} />EBITDA Contribution%</span>
+                        </div>
+                        {sortedSkus.map(s => {
+                          const m = deriveMargins(s);
+                          const revMix   = s.rev.net / totalNr * 100;
+                          const ebContrib = m.eb / totalEb * 100;
+                          const punch = ebContrib - revMix;
+                          return (
+                            <div key={s.id} style={{ marginBottom:12 }}>
+                              <div style={{ display:"flex", justifyContent:"space-between", fontSize:10, marginBottom:3 }}>
+                                <span style={{ color:T.tx }}>{s.label}</span>
+                                <span style={{ fontSize:9, color:punch>=0?T.grn:T.red, fontFamily:"'JetBrains Mono',monospace" }}>
+                                  {punch>=0?"▲":"▼"} {Math.abs(punch).toFixed(1)}pp
+                                </span>
+                              </div>
+                              <div style={{ display:"flex", flexDirection:"column", gap:2 }}>
+                                <div style={{ height:4, background:"rgba(255,255,255,0.04)", position:"relative" }}>
+                                  <div style={{ width:`${revMix}%`, height:"100%", background:T.sub, opacity:.6 }} />
+                                  <span style={{ position:"absolute", right:2, top:5, fontSize:7, color:T.sub }}>{revMix.toFixed(0)}%</span>
+                                </div>
+                                <div style={{ height:4, background:"rgba(255,255,255,0.04)", position:"relative" }}>
+                                  <div style={{ width:`${Math.max(0,ebContrib)}%`, height:"100%", background:T.gld, opacity:.7 }} />
+                                  <span style={{ position:"absolute", right:2, top:5, fontSize:7, color:T.gld }}>{ebContrib.toFixed(0)}%</span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Row: Trend + Peer */}
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:22 }}>
+                    <div>
+                      <div style={{ fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:T.sub, marginBottom:9 }}>3-Year EBITDA% Trend by SKU</div>
+                      <div style={{ background:T.s3, border:`1px solid ${T.brd}`, padding:"15px 17px" }}>
+                        {sortedSkus.map(s => {
+                          const td = TREND_DATA[s.id] || [];
+                          const vals = td.map(t => deriveMargins(t).ebP);
+                          const maxV = Math.max(...vals, 1);
+                          const delta = vals.length>=2 ? vals[2]-vals[0] : 0;
+                          return (
+                            <div key={s.id} style={{ marginBottom:14 }}>
+                              <div style={{ display:"flex", justifyContent:"space-between", fontSize:10, marginBottom:4 }}>
+                                <span style={{ color:T.tx }}>{s.label}</span>
+                                <span style={{ fontSize:9, color:delta>=0?T.grn:T.red, fontFamily:"'JetBrains Mono',monospace" }}>
+                                  {delta>=0?"▲":"▼"} {Math.abs(delta).toFixed(1)}pp FY24→FY26
+                                </span>
+                              </div>
+                              <div style={{ display:"flex", gap:3, alignItems:"flex-end", height:32 }}>
+                                {vals.map((v,i) => (
+                                  <div key={i} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:1 }}>
+                                    <span style={{ fontSize:7, color:i===2?T.gld:T.dim }}>{v.toFixed(1)}%</span>
+                                    <div style={{ width:"100%", height:`${Math.max(4, v/maxV*22)}px`, background:i===2?T.gld:"rgba(255,255,255,0.15)", borderRadius:1 }} />
+                                    <span style={{ fontSize:7, color:T.dim }}>{TREND_PERIODS[i]}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:9 }}>
+                        <div style={{ fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:T.sub }}>Peer Benchmarking — FY26</div>
+                        <div style={{ display:"flex", gap:3 }}>
+                          {[["ebP","EBITDA%"],["gmP","GM%"],["leakagePct","Leakage%"]].map(([k,lbl])=>(
+                            <button key={k} onClick={()=>setPeerMetric(k)}
+                              style={{ padding:"2px 7px", fontSize:8, border:`1px solid ${peerMetric===k?T.gld:T.brd}`, background:peerMetric===k?"rgba(255,230,0,0.12)":"transparent", color:peerMetric===k?T.gld:T.dim, cursor:"pointer", fontFamily:"inherit" }}>{lbl}</button>
+                          ))}
+                        </div>
+                      </div>
+                      <div style={{ background:T.s3, border:`1px solid ${T.brd}`, padding:"15px 17px" }}>
+                        <div style={{ marginBottom:10 }}>
+                          <div style={{ display:"flex", justifyContent:"space-between", fontSize:10, marginBottom:2 }}>
+                            <span style={{ color:T.gld, fontWeight:600 }}>Himcool (Blended)</span>
+                            <span style={{ fontFamily:"'JetBrains Mono',monospace", color:T.gld, fontWeight:700 }}>{himcoolVal.toFixed(1)}%</span>
+                          </div>
+                          <div style={{ height:5, background:"rgba(255,255,255,0.04)" }}>
+                            <div style={{ width:`${himcoolVal/peerMax*100}%`, height:"100%", background:T.gld, opacity:.8 }} />
+                          </div>
+                        </div>
+                        <div style={{ borderTop:`1px solid rgba(255,255,255,0.05)`, paddingTop:8 }}>
+                          {peerFY26.map(p=>(
+                            <div key={p.name} style={{ marginBottom:7 }}>
+                              <div style={{ display:"flex", justifyContent:"space-between", fontSize:10, marginBottom:2 }}>
+                                <span style={{ color:p.isQuartile?T.dim:T.sub, fontStyle:p.isQuartile?"italic":"normal" }}>{p.name}</span>
+                                <span style={{ fontFamily:"'JetBrains Mono',monospace", color:p.color }}>{p.val.toFixed(1)}%</span>
+                              </div>
+                              <div style={{ height:p.isQuartile?2:3, background:"rgba(255,255,255,0.04)" }}>
+                                <div style={{ width:`${p.val/peerMax*100}%`, height:"100%", background:p.color, opacity:p.isQuartile?.4:.55 }} />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ marginTop:8, fontSize:8, color:T.dim, fontStyle:"italic" }}>Illustrative — based on public disclosures &amp; industry estimates</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* ════════ SINGLE-SKU VIEW ════════ */}
+            {selectedSkuId !== "all" && (
+              <div>
             <div style={{ display: "grid", gridTemplateColumns: "1.25fr 1fr", gap: 22 }}>
               <div>
                 <div style={{ fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: T.sub, marginBottom: 9 }}>Margin Waterfall — {pnl.period}</div>
@@ -810,9 +1124,81 @@ export default function App() {
                 </div>
               </div>
             </div>
+
+                {/* 3-Year Trend + Peer Comparison */}
+                {(() => {
+                  const td = TREND_DATA[selectedSkuId] || [];
+                  const trendMs = td.map(t => deriveMargins(t));
+                  const peerFY26s  = PEERS.map(p => ({...p, val: p.data[2][peerMetric]}));
+                  const himcoolVal2 = base[peerMetric];
+                  const peerMax2   = Math.max(...peerFY26s.map(p=>p.val), himcoolVal2) * 1.1;
+                  return (
+                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:22, marginTop:22 }}>
+                      <div>
+                        <div style={{ fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:T.sub, marginBottom:9 }}>3-Year Performance Trend</div>
+                        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8 }}>
+                          {trendMs.map((m,i)=>(
+                            <div key={i} style={{ background:T.s3, border:`1px solid ${i===2?"rgba(255,230,0,0.2)":T.brd}`, padding:"10px 12px" }}>
+                              <div style={{ fontSize:8, color:T.dim, marginBottom:4 }}>{TREND_PERIODS[i]}{i===2?" (TTM)":""}</div>
+                              <div style={{ fontSize:18, fontFamily:"'Fraunces',Georgia,serif", color:i===2?T.gld:T.tx }}>{fmtPct(m.ebP)}</div>
+                              <div style={{ fontSize:9, color:T.sub, marginTop:1 }}>EBITDA</div>
+                              <div style={{ marginTop:6, fontSize:9, color:T.sub }}>GM: <span style={{ color:T.tx }}>{fmtPct(m.gmP)}</span></div>
+                              <div style={{ fontSize:9, color:T.sub }}>Leakage: <span style={{ color:m.leakagePct>12?T.red:T.tx }}>{fmtPct(m.leakagePct)}</span></div>
+                            </div>
+                          ))}
+                        </div>
+                        {trendMs.length>=2 && (
+                          <div style={{ marginTop:8, padding:"8px 10px", background:"rgba(255,255,255,0.02)", border:`1px solid ${T.brd}`, fontSize:10, color:T.sub }}>
+                            EBITDA: <span style={{ color:trendMs[2].ebP>=trendMs[0].ebP?T.grn:T.red, fontWeight:600 }}>
+                              {trendMs[2].ebP>=trendMs[0].ebP?"▲":"▼"} {Math.abs(trendMs[2].ebP-trendMs[0].ebP).toFixed(1)}pp FY24→FY26
+                            </span>
+                            &nbsp;&nbsp; GM: <span style={{ color:trendMs[2].gmP>=trendMs[0].gmP?T.grn:T.red, fontWeight:600 }}>
+                              {trendMs[2].gmP>=trendMs[0].gmP?"▲":"▼"} {Math.abs(trendMs[2].gmP-trendMs[0].gmP).toFixed(1)}pp
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:9 }}>
+                          <div style={{ fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:T.sub }}>Peer Benchmarking — FY26</div>
+                          <div style={{ display:"flex", gap:3 }}>
+                            {[["ebP","EBITDA%"],["gmP","GM%"],["leakagePct","Leakage%"]].map(([k,lbl])=>(
+                              <button key={k} onClick={()=>setPeerMetric(k)}
+                                style={{ padding:"2px 7px", fontSize:8, border:`1px solid ${peerMetric===k?T.gld:T.brd}`, background:peerMetric===k?"rgba(255,230,0,0.12)":"transparent", color:peerMetric===k?T.gld:T.dim, cursor:"pointer", fontFamily:"inherit" }}>{lbl}</button>
+                            ))}
+                          </div>
+                        </div>
+                        <div style={{ background:T.s3, border:`1px solid ${T.brd}`, padding:"13px 15px" }}>
+                          <div style={{ marginBottom:8 }}>
+                            <div style={{ display:"flex", justifyContent:"space-between", fontSize:10, marginBottom:2 }}>
+                              <span style={{ color:T.gld, fontWeight:600 }}>{pnl.label} (This SKU)</span>
+                              <span style={{ fontFamily:"'JetBrains Mono',monospace", color:T.gld, fontWeight:700 }}>{himcoolVal2.toFixed(1)}%</span>
+                            </div>
+                            <div style={{ height:5, background:"rgba(255,255,255,0.04)" }}>
+                              <div style={{ width:`${himcoolVal2/peerMax2*100}%`, height:"100%", background:T.gld, opacity:.8 }} />
+                            </div>
+                          </div>
+                          {peerFY26s.map(p=>(
+                            <div key={p.name} style={{ marginBottom:6 }}>
+                              <div style={{ display:"flex", justifyContent:"space-between", fontSize:10, marginBottom:2 }}>
+                                <span style={{ color:p.isQuartile?T.dim:T.sub, fontStyle:p.isQuartile?"italic":"normal" }}>{p.name}</span>
+                                <span style={{ fontFamily:"'JetBrains Mono',monospace", color:p.color }}>{p.val.toFixed(1)}%</span>
+                              </div>
+                              <div style={{ height:p.isQuartile?2:3, background:"rgba(255,255,255,0.04)" }}>
+                                <div style={{ width:`${p.val/peerMax2*100}%`, height:"100%", background:p.color, opacity:p.isQuartile?.4:.55 }} />
+                              </div>
+                            </div>
+                          ))}
+                          <div style={{ marginTop:6, fontSize:8, color:T.dim, fontStyle:"italic" }}>Illustrative — based on public disclosures</div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
           </div>
         )}
-
         {/* ══════════════ SCENARIO BUILDER ══════════════ */}
         {view === "sc" && (
           <div className="fade" style={{ display: "grid", gridTemplateColumns: "290px 1fr", gap: 22 }}>
