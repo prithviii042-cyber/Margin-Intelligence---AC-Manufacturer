@@ -407,6 +407,16 @@ Your job: Honest functional view at THIS specific setting (${v} ${l.sl.unit}).
 End with: IMPACT · CONFIDENCE · EFFORT · OWNER. Under 160 words. India AC context.`;
 };
 
+// Co-pilot system prompt for a specific agent (no lever context)
+const agentCopilotSystem = (agId, pnl, m) => {
+  const a = AGENTS[agId];
+  return `You are ${a.name} on a CFO advisory bench for ${pnl.companyName}. Role: ${a.role}. Scope: ${a.scope}.
+Company context: Net Rev ${fmtCr(pnl.rev.net)} · EBITDA ${fmtPct(m.ebP)} · GM ${fmtPct(m.gmP)} · G→N Leakage ${fmtPct(m.leakagePct)}.
+BOM: Compressor ${pnl.bom.Compressor}% · Copper Tubing ${pnl.bom["Copper Tubing"]}% · PCB ${pnl.bom["PCB/Controller"]}%.
+Channel: GT ${pnl.ch["General Trade"]}% · E-com ${pnl.ch["E-commerce"]}% · B2B ${pnl.ch["B2B/Projects"]}%.
+Answer ONLY from your functional expertise. Be direct, use ₹Cr and bps. Under 200 words per answer. India AC context.`;
+};
+
 // ── P&L UPLOAD PARSER ─────────────────────────────────────────
 function parsePnLFile(file) {
   return new Promise((resolve, reject) => {
@@ -635,12 +645,23 @@ export default function App() {
   const [benchRunning, setBR]         = useState(false);
 
   // Co-pilot state
-  const [copOpen, setCopOpen]   = useState(false);
+  const [copOpen, setCopOpen]       = useState(false);
+  const [copilotAgent, setCopAgent] = useState(null); // null = CFO orchestrator, else agId
   const [peerMetric, setPeerMetric] = useState("ebP");
-  const [chatHistory, setChat]  = useState([]);
-  const [chatInput, setChatInp] = useState("");
-  const [chatLoading, setChatLd]= useState(false);
-  const chatBodyRef             = useRef(null);
+  const [chatHistory, setChat]      = useState([]);
+  const [chatInput, setChatInp]     = useState("");
+  const [chatLoading, setChatLd]    = useState(false);
+  const chatBodyRef                 = useRef(null);
+
+  const openAgentCopilot = (agId) => {
+    setCopAgent(agId);
+    setCopOpen(true);
+    setChat([{
+      role: "assistant",
+      content: `👋 You're speaking with **${AGENTS[agId].name}** (${AGENTS[agId].role}). I focus on: ${AGENTS[agId].scope}\n\nWhat would you like to explore for **${pnl.label || pnl.companyName}**?`,
+      agents: [agId],
+    }]);
+  };
 
   const pnl  = useMemo(() => {
     if (selectedSkuId === "all") return blendProfiles(skuProfiles.filter(s => s.id !== "all"));
@@ -722,11 +743,12 @@ export default function App() {
     const msg = { role: "user", content: chatInput };
     const next = [...chatHistory, msg];
     setChat(next); setChatInp(""); setChatLd(true);
+    const sys = copilotAgent ? agentCopilotSystem(copilotAgent, pnl, base) : orchSystem(pnl, base);
     const reply = await callClaude(
       next.map(m => ({ role: m.role, content: m.content })),
-      orchSystem(pnl, base)
+      sys
     );
-    setChat([...next, { role: "assistant", content: reply, agents: ["orch"] }]);
+    setChat([...next, { role: "assistant", content: reply, agents: [copilotAgent || "orch"] }]);
     setChatLd(false);
     setTimeout(() => { if (chatBodyRef.current) chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight; }, 50);
   };
@@ -1069,61 +1091,44 @@ export default function App() {
             {/* ════════ SINGLE-SKU VIEW ════════ */}
             {selectedSkuId !== "all" && (
               <div>
-            <div style={{ display: "grid", gridTemplateColumns: "1.25fr 1fr", gap: 22 }}>
-              <div>
-                <div style={{ fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: T.sub, marginBottom: 9 }}>Margin Waterfall — {pnl.period}</div>
-                <div style={{ background: T.s3, border: `1px solid ${T.brd}`, padding: "15px 17px" }}>
-                  {[
-                    { l: "Gross Revenue",             v: pnl.rev.gross, pos: true  },
-                    { l: "Trade Schemes",              v: -pnl.rev.scheme, pos: false, s: "leakage lever" },
-                    { l: "Cash Disc + Rebates",        v: -(pnl.rev.cd + pnl.rev.vr + pnl.rev.sp), pos: false },
-                    { l: "Net Revenue",                v: pnl.rev.net, pos: true  },
-                    { l: "BOM",                        v: -pnl.cogs.bom, pos: false, s: "Cu/Al/compressor" },
-                    { l: "Conversion Cost",            v: -pnl.cogs.conv, pos: false },
-                    { l: "Inbound Freight + Duty",     v: -(pnl.cogs.inf + pnl.cogs.duty), pos: false },
-                    { l: "Gross Margin",               v: base.gm, pos: true  },
-                    { l: "Outbound + Warranty + Install", v: -(pnl.below.ofr + pnl.below.war + pnl.below.ins), pos: false },
-                    { l: "A&P + Trade Mktg + Selling", v: -(pnl.below.aap + pnl.below.tmk + pnl.below.soh), pos: false },
-                    { l: "Corporate OH + R&D",         v: -(pnl.below.coh + pnl.below.rd), pos: false },
-                    { l: "EBITDA",                     v: base.eb, pos: true  },
-                  ].map(r => <WBar key={r.l} {...r} max={pnl.rev.gross} />)}
-                </div>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-                <div>
-                  <div style={{ fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: T.sub, marginBottom: 9 }}>Advisory Bench — 8 Agents</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                    {Object.entries(AGENTS).map(([id, a]) => { const I = a.icon; return (
-                      <div key={id} style={{ background: T.s3, border: `1px solid ${T.brd}`, padding: "9px 11px", display: "flex", gap: 9, alignItems: "flex-start" }}>
-                        <div style={{ width: 24, height: 24, background: `${a.color}14`, border: `1px solid ${a.color}38`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                          <I size={12} color={a.color} />
+                {/* Row 1: Waterfall + BOM Shape */}
+                <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 22, marginBottom: 22 }}>
+                  <div>
+                    <div style={{ fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: T.sub, marginBottom: 9 }}>Margin Waterfall — {pnl.period}</div>
+                    <div style={{ background: T.s3, border: `1px solid ${T.brd}`, padding: "15px 17px" }}>
+                      {[
+                        { l: "Gross Revenue",             v: pnl.rev.gross, pos: true  },
+                        { l: "Trade Schemes",              v: -pnl.rev.scheme, pos: false, s: "leakage lever" },
+                        { l: "Cash Disc + Rebates",        v: -(pnl.rev.cd + pnl.rev.vr + pnl.rev.sp), pos: false },
+                        { l: "Net Revenue",                v: pnl.rev.net, pos: true  },
+                        { l: "BOM",                        v: -pnl.cogs.bom, pos: false, s: "Cu/Al/compressor" },
+                        { l: "Conversion Cost",            v: -pnl.cogs.conv, pos: false },
+                        { l: "Inbound Freight + Duty",     v: -(pnl.cogs.inf + pnl.cogs.duty), pos: false },
+                        { l: "Gross Margin",               v: base.gm, pos: true  },
+                        { l: "Outbound + Warranty + Install", v: -(pnl.below.ofr + pnl.below.war + pnl.below.ins), pos: false },
+                        { l: "A&P + Trade Mktg + Selling", v: -(pnl.below.aap + pnl.below.tmk + pnl.below.soh), pos: false },
+                        { l: "Corporate OH + R&D",         v: -(pnl.below.coh + pnl.below.rd), pos: false },
+                        { l: "EBITDA",                     v: base.eb, pos: true  },
+                      ].map(r => <WBar key={r.l} {...r} max={pnl.rev.gross} />)}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: T.sub, marginBottom: 9 }}>BOM Shape — {pnl.label}</div>
+                    <div style={{ background: T.s3, border: `1px solid ${T.brd}`, padding: "13px 15px" }}>
+                      {Object.entries(pnl.bom).filter(([,v])=>v>0).sort((a, b) => b[1] - a[1]).map(([k, v]) => (
+                        <div key={k} style={{ marginBottom: 7 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}>
+                            <span style={{ color: "#c8c4d8" }}>{k}</span>
+                            <span style={{ fontFamily: "'JetBrains Mono', monospace", color: T.tx }}>{v}%</span>
+                          </div>
+                          <div style={{ height: 3, background: "rgba(255,255,255,0.03)" }}>
+                            <div style={{ width: `${v * 2.5}%`, height: "100%", background: "#7eb8d4", opacity: .52 }} />
+                          </div>
                         </div>
-                        <div>
-                          <div style={{ fontSize: 11, fontWeight: 500, color: T.tx }}>{a.name}<span style={{ fontSize: 7, color: T.dim, marginLeft: 5, textTransform: "uppercase", letterSpacing: ".1em" }}>{a.role}</span></div>
-                          <div style={{ fontSize: 10, color: T.sub, marginTop: 2, lineHeight: 1.45 }}>{a.scope}</div>
-                        </div>
-                      </div>
-                    ); })}
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div style={{ fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: T.sub, marginBottom: 9 }}>BOM Shape — 1.5TR 5★ Inverter</div>
-                  <div style={{ background: T.s3, border: `1px solid ${T.brd}`, padding: "13px 15px" }}>
-                    {Object.entries(pnl.bom).sort((a, b) => b[1] - a[1]).map(([k, v]) => (
-                      <div key={k} style={{ marginBottom: 7 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}>
-                          <span style={{ color: "#c8c4d8" }}>{k}</span>
-                          <span style={{ fontFamily: "'JetBrains Mono', monospace", color: T.tx }}>{v}%</span>
-                        </div>
-                        <div style={{ height: 3, background: "rgba(255,255,255,0.03)" }}>
-                          <div style={{ width: `${v * 2.5}%`, height: "100%", background: "#7eb8d4", opacity: .52 }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
 
                 {/* 3-Year Trend + Peer Comparison */}
                 {(() => {
@@ -1195,6 +1200,34 @@ export default function App() {
                     </div>
                   );
                 })()}
+
+                {/* Advisory Bench — at bottom, clickable */}
+                <div style={{ marginTop: 22 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
+                    <div style={{ fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: T.sub }}>Advisory Bench — Click to open in CFO Co-pilot</div>
+                    <button onClick={() => { setCopAgent(null); setCopOpen(true); }}
+                      style={{ fontSize: 8, padding: "2px 8px", background: "rgba(255,230,0,0.08)", border: `1px solid ${T.brd}`, color: T.gld, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 4 }}>
+                      <Sparkles size={9} /> Open CFO Co-pilot
+                    </button>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
+                    {Object.entries(AGENTS).map(([id, a]) => { const I = a.icon; return (
+                      <div key={id} onClick={() => openAgentCopilot(id)}
+                        style={{ background: T.s3, border: `1px solid ${T.brd}`, padding: "10px 12px", display: "flex", gap: 9, alignItems: "flex-start", cursor: "pointer", transition: "border-color .15s, background .15s" }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = a.color; e.currentTarget.style.background = `${a.color}0d`; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = T.brd; e.currentTarget.style.background = T.s3; }}>
+                        <div style={{ width: 26, height: 26, background: `${a.color}18`, border: `1px solid ${a.color}44`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, borderRadius: 2 }}>
+                          <I size={13} color={a.color} />
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontSize: 11, fontWeight: 500, color: T.tx, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{a.name}</div>
+                          <div style={{ fontSize: 7, color: a.color, textTransform: "uppercase", letterSpacing: ".1em", marginTop: 1 }}>{a.role}</div>
+                          <div style={{ fontSize: 9, color: T.sub, marginTop: 3, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{a.scope}</div>
+                        </div>
+                      </div>
+                    ); })}
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -1501,10 +1534,32 @@ export default function App() {
           onClick={e => { if (e.target === e.currentTarget) setCopOpen(false); }}>
           <div style={{ position: "absolute", top: 0, right: 0, width: 480, height: "100%", background: T.bg2, borderLeft: `1px solid ${T.brd}`, display: "flex", flexDirection: "column", animation: "slideIn .25s ease" }}>
             {/* Drawer header */}
-            <div style={{ padding: "15px 19px", borderBottom: `1px solid ${T.brd}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
-              <div>
-                <div style={{ fontSize: 14, fontFamily: "'Fraunces', Georgia, serif" }}>CFO Co-pilot</div>
-                <div style={{ fontSize: 8, color: T.sub, letterSpacing: ".14em", textTransform: "uppercase", marginTop: 2 }}>Orchestrating 7 specialist agents</div>
+            <div style={{ padding: "13px 19px", borderBottom: `1px solid ${T.brd}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                {copilotAgent ? (() => {
+                  const a = AGENTS[copilotAgent];
+                  const I = a.icon;
+                  return (
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <div style={{ width: 22, height: 22, background: `${a.color}18`, border: `1px solid ${a.color}44`, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 2 }}>
+                          <I size={12} color={a.color} />
+                        </div>
+                        <div style={{ fontSize: 14, fontFamily: "'Fraunces', Georgia, serif", color: a.color }}>{a.name}</div>
+                        <span style={{ fontSize: 7, color: T.dim, textTransform: "uppercase", letterSpacing: ".1em", border: `1px solid ${T.brd}`, padding: "1px 5px" }}>{a.role}</span>
+                      </div>
+                      <button onClick={() => { setCopAgent(null); setChat([]); }}
+                        style={{ marginTop: 4, fontSize: 8, color: T.sub, background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "inherit", display: "flex", alignItems: "center", gap: 3 }}>
+                        ← Back to CFO Co-pilot (all agents)
+                      </button>
+                    </div>
+                  );
+                })() : (
+                  <div>
+                    <div style={{ fontSize: 14, fontFamily: "'Fraunces', Georgia, serif" }}>CFO Co-pilot</div>
+                    <div style={{ fontSize: 8, color: T.sub, letterSpacing: ".14em", textTransform: "uppercase", marginTop: 2 }}>Orchestrating 7 specialist agents</div>
+                  </div>
+                )}
               </div>
               <button onClick={() => setCopOpen(false)} style={{ background: "none", border: "none", color: T.sub, cursor: "pointer", padding: 0 }}>
                 <X size={16} />
@@ -1553,7 +1608,8 @@ export default function App() {
               ))}
               {chatLoading && (
                 <div style={{ display: "flex", alignItems: "center", gap: 7, color: T.sub, fontSize: 11 }}>
-                  <Loader2 size={11} style={{ animation: "spin 1s linear infinite" }} /> Routing to specialists…
+                  <Loader2 size={11} style={{ animation: "spin 1s linear infinite" }} />
+                  {copilotAgent ? `${AGENTS[copilotAgent].name} is thinking…` : "Routing to specialists…"}
                 </div>
               )}
             </div>
