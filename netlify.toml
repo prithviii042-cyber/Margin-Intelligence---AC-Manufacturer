@@ -6,7 +6,14 @@
   path = "/api/claude"
   function = "claude"
 
-# SPA routing
+# Let edge function handle /api/* — do NOT redirect these to index.html
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200
+  force = true
+
+# SPA routing — all other routes
 [[redirects]]
   from = "/*"
   to = "/index.html"
