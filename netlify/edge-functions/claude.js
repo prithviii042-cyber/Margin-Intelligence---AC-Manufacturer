@@ -1,9 +1,8 @@
 // netlify/edge-functions/claude.js
-// Secure proxy for Anthropic API — keeps your API key server-side
-// Deploy: set ANTHROPIC_API_KEY in Netlify → Site config → Environment variables
+// Secure proxy for Anthropic API
+// Path declared in netlify.toml [[edge_functions]] block
 
 export default async (request) => {
-  // Only allow POST
   if (request.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
@@ -11,11 +10,10 @@ export default async (request) => {
     });
   }
 
-  // Check API key is configured
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) {
     return new Response(
-      JSON.stringify({ error: "ANTHROPIC_API_KEY not configured. Add it in Netlify → Site configuration → Environment variables." }),
+      JSON.stringify({ error: "ANTHROPIC_API_KEY not configured" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
@@ -23,7 +21,6 @@ export default async (request) => {
   try {
     const body = await request.json();
 
-    // Forward to Anthropic
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -51,8 +48,4 @@ export default async (request) => {
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
-};
-
-export const config = {
-  path: "/api/claude",
 };
