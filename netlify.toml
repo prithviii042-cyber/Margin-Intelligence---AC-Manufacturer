@@ -2,8 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
-[functions]
-  directory = "netlify/functions"
+[[edge_functions]]
+  path = "/api/llm"
+  function = "llm-proxy"
 
 # SPA routing
 [[redirects]]

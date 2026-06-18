@@ -356,25 +356,36 @@ const fmtPct = n => `${Number(n).toFixed(1)}%`;
 const fmtBps = n => `${n >= 0 ? "+" : ""}${Math.round(n)} bps`;
 const confColor = c => c === "High" ? "#9dc4a8" : c === "Medium-High" ? "#c4ba6e" : c === "Medium" ? "#d4a574" : "#b8848c";
 
-// ── CLAUDE API (calls Netlify Function proxy) ─────────────────
+// ── LLM API (calls proxy — SSE response with keepalive support) ──
 async function callClaude(messages, system) {
   try {
-    const res = await fetch("/.netlify/functions/claude", {
+    const res = await fetch("/api/llm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        system,
-        messages,
-      }),
+      body: JSON.stringify({ system, messages }),
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+
+    // Parse SSE stream — skip keepalive comments, extract data event
+    const text = await res.text();
+    const dataLine = text.split("\n").find(l => l.startsWith("data: "));
+    if (!dataLine) throw new Error("No data received from API");
+
+    const data = JSON.parse(dataLine.slice(6));
+    if (data.error) throw new Error(typeof data.error === "string" ? data.error : JSON.stringify(data.error));
+
+    // OpenAI format
+    if (data.choices) {
+      return data.choices[0]?.message?.content || "No response.";
+    }
+    // Anthropic format fallback
     return data.content?.filter(c => c.type === "text").map(c => c.text).join("\n") || "No response.";
   } catch (e) {
-    console.error("Claude API error:", e);
-    return `⚠ Agent unavailable: ${e.message}. Check your ANTHROPIC_API_KEY in Netlify environment variables.`;
+    console.error("LLM API error:", e);
+    return `⚠ Agent unavailable: ${e.message}. Check your API key configuration.`;
   }
 }
 
