@@ -2,18 +2,10 @@
   command = "npm run build"
   publish = "dist"
 
-[[edge_functions]]
-  path = "/api/claude"
-  function = "claude"
+[functions]
+  directory = "netlify/functions"
 
-# Let edge function handle /api/* — do NOT redirect these to index.html
-[[redirects]]
-  from = "/api/*"
-  to = "/api/:splat"
-  status = 200
-  force = true
-
-# SPA routing — all other routes
+# SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
