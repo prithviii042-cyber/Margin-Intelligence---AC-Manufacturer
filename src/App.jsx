@@ -359,7 +359,7 @@ const confColor = c => c === "High" ? "#9dc4a8" : c === "Medium-High" ? "#c4ba6e
 // ── CLAUDE API (calls Netlify Function proxy) ─────────────────
 async function callClaude(messages, system) {
   try {
-    const res = await fetch("/api/claude", {
+    const res = await fetch("/.netlify/functions/claude", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -1637,3 +1637,4 @@ export default function App() {
     </div>
   );
 }
+
